@@ -33,7 +33,6 @@ public class WriteBuffer {
 	}
 	
 	public void store (String x, int v) {
-		
 		if(tso)
 			storeTSO(x, v);
 		else
