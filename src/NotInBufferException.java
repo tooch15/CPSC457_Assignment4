@@ -1,7 +1,7 @@
 
 public class NotInBufferException extends Exception {
 	
-	public NotInBufferException() {}
+	public NotInBufferException() { super(); }
 	
 	
 	public NotInBufferException(String messege) { super(messege); }
