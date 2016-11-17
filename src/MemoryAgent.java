@@ -2,9 +2,21 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class MemoryAgent extends Thread {
 
+	/**
+	 * The WriteBuffer
+	 */
 	public WriteBuffer wBuffer;
+	/**
+	 * The MainMemory used by the MemoryAgent's processor
+	 */
 	public MainMemory mMemory;
+	/*
+	 * A boolean to keep track of if the thread should stop
+	 */
 	private boolean finished = false;
+	/**
+	 * Java needs this
+	 */
 	static boolean ONE = true;
 	
 	/**
@@ -17,6 +29,10 @@ public class MemoryAgent extends Thread {
 		mMemory = inputMainMemory;
 	}
 	
+	/**
+	 * Checks the wBuffer for a variable to store. If a variable is found, store it to main memory. Otherwise, repeat.
+	 * Will stop when endThread is called and the wBuffer is empty.
+	 */
 	public void run() {
 		//Run loop until endThread is called, then end the thread.
 		while(ONE){
