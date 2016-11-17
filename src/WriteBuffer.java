@@ -5,13 +5,13 @@ public class WriteBuffer {
 
 	private boolean tso; // if true, use FIFO; else use FIFO per variable
 
-	ConcurrentHashMap<String, ConcurrentLinkedDeque<Variable>> buffer = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, ConcurrentLinkedDeque<memoryVariable>> buffer = new ConcurrentHashMap<>();
 	
 	public WriteBuffer(boolean tsoIn) {
 		tso = tsoIn;
 		
 		if (tso)
-			buffer.put("TSOBuffer", new ConcurrentLinkedDeque<Variable>());
+			buffer.put("TSOBuffer", new ConcurrentLinkedDeque<memoryVariable>());
 		
 	}
 	
@@ -26,6 +26,9 @@ public class WriteBuffer {
 		
 		if (throwException)
 			throw new NotInBufferException();
+		else {
+			
+		}
 		
 	}
 	
@@ -38,31 +41,31 @@ public class WriteBuffer {
 		
 	}
 	
-	private boolean loadTSO(String x) {
+	private int loadTSO(String x) {
 		
 		//if (buffer.get("TSOBuffer").)
-		
+		return true;
 		
 	}
 	
-	private boolean loadPSO(String x) {
+	private int loadPSO(String x) {
 		
-		return (buffer.containsKey(x)) ? false : true; 
+		//return (buffer.containsKey(x))
 
 	}
 	
 	private void storeTSO(String x, int v) {
 		
-		buffer.get("TSOBuffer").add(new Variable(x, v));
+		buffer.get("TSOBuffer").add(new memoryVariable(x, v));
 		
 	}
 	
 	private void storePSO(String x, int v) {
 		
 		if (!buffer.containsKey(x))
-			buffer.put(x, new ConcurrentLinkedDeque<Variable>());
+			buffer.put(x, new ConcurrentLinkedDeque<memoryVariable>());
 		
-		buffer.get(x).add(new Variable(x, v));
+		buffer.get(x).add(new memoryVariable(x, v));
 
 	}
 

@@ -4,7 +4,6 @@ import java.util.concurrent.*;
 
 public class MainMemory {
 	
-	//W oeuyoudewuhou
 
 	public MemoryAgent mAgent;
 	
