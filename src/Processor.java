@@ -3,6 +3,7 @@ public class Processor extends Thread {
 	
 	public WriteBuffer wBuffer;
 	public MemoryAgent mAgent;
+	public MainMemory mMemory;
 	
 	public static final int N = 10;
 	
@@ -10,6 +11,12 @@ public class Processor extends Thread {
 	public boolean[] flag = new boolean[N];
 	
 	private int i = 0;
+	
+	public Processor(boolean TSO, MainMemory mMemory){
+		this.mMemory = mMemory;
+		wBuffer = new WriteBuffer(TSO);
+		mAgent = new MemoryAgent(wBuffer, mMemory);
+	}
 	
 	
 	
