@@ -1,4 +1,4 @@
-import java.util.HashMap;
+
 import java.util.concurrent.*;
 
 
@@ -6,7 +6,7 @@ public class MainMemory {
 
 	public MemoryAgent mAgent;
 	
-	private HashMap<String, Integer> storedData = new HashMap<>();
+	private ConcurrentHashMap<String, Integer> storedData = new ConcurrentHashMap<>();
 	
 	public int load(String x) { return storedData.get(x); }
 	
