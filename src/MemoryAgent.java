@@ -1,4 +1,3 @@
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class MemoryAgent extends Thread {
 
