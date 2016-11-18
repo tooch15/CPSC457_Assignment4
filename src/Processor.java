@@ -71,13 +71,13 @@ public class Processor extends Thread {
 		for (int processLevel = 0; processLevel < numberOfProcessors - 1; processLevel++ ){
 			//Indicate that this process is competing at level processLevel
 			
-			wBuffer.store(flagVarName, processLevel); //flag[processorNumber] = processLevel;
-			//wBuffer.store(flagVarName, processLevel);		
+			wBuffer.SwapAtomic(flagVarName, processLevel); //flag[processorNumber] = processLevel;
+			//wBuffer.SwapAtomic(flagVarName, processLevel);		
 			String turnVarName = "turn" + processLevel;
 			
 			//Indicate that it is this process's turn (to wait) at level K 
-			wBuffer.store(turnVarName, processorNumber); //turn[processLevel] = processorNumber;
-			//wBuffer.store(turnVarName, processorNumber);		
+			wBuffer.SwapAtomic(turnVarName, processorNumber); //turn[processLevel] = processorNumber;
+			//wBuffer.SwapAtomic(turnVarName, processorNumber);		
 			
 			//Check to see if there are processors competing at a higher level 
 			//and that it is this processor's turn to wait.
@@ -115,8 +115,8 @@ public class Processor extends Thread {
 	 */
 	public void PetersonsAlgorithmExitSection(){
 		//flag[processorNumber] = -1;
-		wBuffer.store(flagVarName, -1);
-		//wBuffer.store(flagVarName, -1);
+		wBuffer.SwapAtomic(flagVarName, -1);
+		//wBuffer.SwapAtomic(flagVarName, -1);
 		
 		
 	}
@@ -128,7 +128,7 @@ public class Processor extends Thread {
 		csInteger.value = originalValue;
 		
 		try {
-			sleep(3);
+			sleep(1);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

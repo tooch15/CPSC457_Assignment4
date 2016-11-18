@@ -16,7 +16,7 @@ public class Tester {
 			mainMemory.store("turn" + i, 0);
 		}
 		
-		boolean TSO = true;
+		boolean TSO = false;
 		
 		if (args.length == 1)
 			numCPU = Integer.parseInt(args[0]);

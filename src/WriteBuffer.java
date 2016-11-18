@@ -53,14 +53,14 @@ public class WriteBuffer {
 	 */
 	public synchronized int load (String x) throws NotInBufferException {
 		
-		/*if (loadFlag) {
+		if (!loadFlag) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}*/
+		}
+		
 			if (tso)
 				return loadTSO(x);
 			else
@@ -220,6 +220,10 @@ public class WriteBuffer {
 		
 		return temp;
 		
+	}
+	
+	public synchronized void notifyLoad() {
+		notifyAll();
 	}
 
 }
