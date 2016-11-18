@@ -8,6 +8,11 @@ public class WriteBuffer {
 	 * a boolean to determine is the write buffer operates in TSO or PSO
 	 */
 	private boolean tso; // if true, use FIFO; else use FIFO per variable (PSO)
+	
+	/**
+	 * a boolean to test if the memoryAgent is done executing
+	 */
+	public boolean loadFlag = true;
 
 	/**
 	 * a concurrent hashmap so store the variable states in a buffer. Can be used for TSO and PSO
@@ -46,12 +51,20 @@ public class WriteBuffer {
 	 * @return the value of the variable
 	 * @throws NotInBufferException if the variable does not exist in the buffer
 	 */
-	public int load (String x) throws NotInBufferException {
+	public synchronized int load (String x) throws NotInBufferException {
 		
-		if (tso)
-			return loadTSO(x);
-		else
-			return loadPSO(x);
+		/*if (loadFlag) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
+			if (tso)
+				return loadTSO(x);
+			else
+				return loadPSO(x);
 		
 	}
 	
@@ -60,7 +73,7 @@ public class WriteBuffer {
 	 * @param x the name of the variable to be store 
 	 * @param v the value of the variable to be store
 	 */
-	public void store (String x, int v) {
+	public synchronized void store (String x, int v) {
 		
 		if(tso)
 			storeTSO(x, v);
@@ -73,7 +86,7 @@ public class WriteBuffer {
 	 * a method to be called by the MemoryAgent in order to store the next value into main memory
 	 * @return the variable object that describes a variables name and value
 	 */
-	public memoryVariable nextVariableToStore() {
+	public synchronized memoryVariable nextVariableToStore() {
 		
 		if (tso)
 			return nextTSO();

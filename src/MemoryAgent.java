@@ -37,6 +37,8 @@ public class MemoryAgent extends Thread {
 		while(ONE){
 			
 			memoryVariable nextVariable = wBuffer.nextVariableToStore();
+			//wBuffer.loadFlag = false;
+			
 			if(nextVariable == null){
 				//if endThread has been called - Setting finished to true - End the thread.
 				if(finished){
@@ -50,6 +52,8 @@ public class MemoryAgent extends Thread {
 			
 			//Store the variable to the MainMemory
 			mMemory.store(nextVariable.vName, nextVariable.value);
+			//wBuffer.loadFlag = true;
+		//	wBuffer.notifyAll();
 			
 			
 		}
