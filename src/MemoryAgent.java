@@ -16,7 +16,7 @@ public class MemoryAgent extends Thread {
 	/**
 	 * Java needs this
 	 */
-	static boolean ONE = true;
+	static final boolean ONE = true;
 	
 	/**
 	 * The constructor for MemoryAgent.

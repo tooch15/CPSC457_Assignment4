@@ -6,10 +6,6 @@ public class Processor extends Thread {
 	 */
 	public WriteBuffer wBuffer;
 	/**
-	 * The MemoryAgent of the Processor
-	 */
-	public MemoryAgent mAgent;
-	/**
 	 * The MainMemory that the processor uses
 	 */
 	public MainMemory mMemory;
@@ -38,8 +34,6 @@ public class Processor extends Thread {
 			WriteBuffer inputWBuffer){
 		mMemory = inputMainMemory;
 		wBuffer = inputWBuffer;
-		mAgent = new MemoryAgent(wBuffer, mMemory);
-		mAgent.start();
 		processorNumber = inputProcessorNumber;
 		flagVarName = "flag" + processorNumber;
 		numberOfProcessors = inputNumberOfProcessors;
@@ -57,16 +51,6 @@ public class Processor extends Thread {
 		PetersonsAlgorithmExitSection();
 		
 	}
-	
-//	/**
-//	 * The turn variable at each level, for Peterson's algorithm..
-//	 */
-//	public static int[] turn;
-//
-//	/**
-//	 * The flag array, for Peterson's algorithm
-//	 */
-//	private static int[] flag;
 	
 	
 	/**
