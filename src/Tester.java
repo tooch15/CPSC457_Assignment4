@@ -20,11 +20,15 @@ public class Tester {
 		for (int i = 0; i < numCPU; i++) {
 			
 			buffers[i] = new WriteBuffer(TSO, mainMemory);
-			procs[i] = new Processor(TSO, mainMemory, numCPU);
+			procs[i] = new Processor(TSO, mainMemory, i, numCPU, buffers[i]);
 			agents[i] = new MemoryAgent(buffers[i], mainMemory);
+			
+			agents[i].start();
 			procs[i].start();
 			
 		}
+		
+		
 		
 	}
 

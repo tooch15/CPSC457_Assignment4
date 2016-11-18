@@ -48,6 +48,14 @@ public class Processor extends Thread {
 	
 	public void run() {
 		
+		petersonAlgorithmEntrySection();
+		
+		System.err.println("Process " + processorNumber + " is entering its critical section.");
+		criticalSection();
+		System.err.println("Process " + processorNumber + " has exited its critical section.");
+		
+		PetersonsAlgorithmExitSection();
+		
 	}
 	
 //	/**
@@ -108,10 +116,24 @@ public class Processor extends Thread {
 	public void PetersonsAlgorithmExitSection(){
 		//flag[processorNumber] = -1;
 		wBuffer.store(flagVarName, -1);
+		
+	}
+	
+	public void criticalSection() {
+		
+		for (int k = 0; k < 100; k++) {
+			System.out.println("Process: " + processorNumber + " is in the critical section.");
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
 	/**
+	 * THIS IS A HELPER FUNCTION
 	 * Returns true if there is a processor competing at a higher (or equal) level as the current process
 	 * @param processLevel the level that the processor is currently competing at
 	 * @return true or false
