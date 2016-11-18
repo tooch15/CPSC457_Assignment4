@@ -8,6 +8,10 @@ public class Tester {
 		
 		int numCPU = 10;
 		
+		for (int i = 0; i < numCPU; i++) {
+			mainMemory.store("flag" + i, -1);
+		}
+		
 		boolean TSO = true;
 		
 		if (args.length == 1)
