@@ -22,45 +22,43 @@ public class Processor extends Thread {
 	/**
 	 * The number of processors, for Peterson's algorithm.
 	 */
-	private static int numberOfProcessors;
+	private int numberOfProcessors;
 	
 	/**
-	 * The turn variable at each level, for Peterson's algorithm..
+	 * The name of the flag variable for this processor
 	 */
-	public static int[] turn;
-
-	/**
-	 * The flag array, for Peterson's algorithm
-	 */
-	private static int[] flag;
-	
+	String flagVarName;
 	
 	/**
 	 * Processor constructor.
 	 * @param TSO Whether the WriteBuffer is TSO or not.
 	 * @param inputMainMemory The MainMemory that the processor will use.
 	 */
-	public Processor(boolean TSO, MainMemory inputMainMemory, int inputProcessorNumber){
+	public Processor(boolean TSO, MainMemory inputMainMemory, int inputProcessorNumber, int inputNumberOfProcessors, 
+			WriteBuffer inputWBuffer){
 		mMemory = inputMainMemory;
-		wBuffer = new WriteBuffer(TSO);
+		wBuffer = inputWBuffer;
 		mAgent = new MemoryAgent(wBuffer, mMemory);
+		mAgent.start();
 		processorNumber = inputProcessorNumber;
-	}
-	
-	/**
-	 * Sets the number of processors (equivalent to processes) for Peterson's algorithm
-	 * @param numProcessors The number of processors in use. 
-	 */
-	public void setUpPetersonsAlgorithm(int numProcessors){
-		numberOfProcessors = numProcessors;
-		flag = new int[numberOfProcessors]; //Initialized to 0
-		turn = new int[numberOfProcessors - 1];
+		flagVarName = "flag" + processorNumber;
+		numberOfProcessors = inputNumberOfProcessors;
 	}
 	
 	
 	public void run() {
 		
 	}
+	
+//	/**
+//	 * The turn variable at each level, for Peterson's algorithm..
+//	 */
+//	public static int[] turn;
+//
+//	/**
+//	 * The flag array, for Peterson's algorithm
+//	 */
+//	private static int[] flag;
 	
 	
 	/**
@@ -71,15 +69,33 @@ public class Processor extends Thread {
 		//<Entry Section>
 		for (int processLevel = 0; processLevel < numberOfProcessors - 1; processLevel++ ){
 			//Indicate that this process is competing at level processLevel
-			flag[processorNumber] = processLevel;
+			
+			wBuffer.store(flagVarName, processLevel); //flag[processorNumber] = processLevel;
+			
+			String turnVarName = "turn" + processLevel;
 			
 			//Indicate that it is this process's turn (to wait) at level K 
-			turn[processLevel] = processorNumber;
+			wBuffer.store(turnVarName, processorNumber); //turn[processLevel] = processorNumber;
 			
 			//Check to see if there are processors competing at a higher level 
 			//and that it is this processor's turn to wait.
 			//If there are no processes at a higher level, or it is no longer this processor's turn, move on
-			while(!checkForHigherProcessors(processLevel) && turn[processLevel] == processorNumber);
+			boolean turn_at_process_level = true; //Assume true to start
+			while(!checkForHigherProcessors(processLevel) && turn_at_process_level){
+				//turn_at_process_level: Represents turn[processLevel] == processorNumber
+				//load(turnVarName) is the same as getting the value of turn[processLevel]
+				
+				int currentTurnValue = 0;
+				//Try to get the currentTurnValue fromt the wBuffer
+				try{
+					currentTurnValue = wBuffer.load(turnVarName);
+				}
+				catch(NotInBufferException e){ //If an exception is thrown, get value from main memory.
+					currentTurnValue = mMemory.load(turnVarName);
+				}
+				
+				turn_at_process_level = (currentTurnValue == processorNumber);
+			}
 			
 		}
 		//Process can now enter <Critical Section>
@@ -90,7 +106,8 @@ public class Processor extends Thread {
 	 * Call after process exits <Critical Section> code
 	 */
 	public void PetersonsAlgorithmExitSection(){
-		flag[processorNumber] = -1;
+		//flag[processorNumber] = -1;
+		wBuffer.store(flagVarName, -1);
 	}
 	
 	
@@ -107,8 +124,18 @@ public class Processor extends Thread {
 				continue;
 			}
 			
+			//Get the flag of the other processor
+			//flag[otherProcessor] == wBuffer.load("flag" + processLevel)
+			int otherProcessorsFlag = 0;
+			
+			try {
+				otherProcessorsFlag = wBuffer.load("flag" + otherProcessor);
+			} catch (NotInBufferException e) {
+				otherProcessorsFlag = mMemory.load("flag" + otherProcessor);
+			}
+			
 			//If the other processor is at the same or a higher level than the current one, wait.
-			if(flag[otherProcessor] >= processLevel){
+			if( otherProcessorsFlag >= processLevel){
 				return true;
 			}
 		}
