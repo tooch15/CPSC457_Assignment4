@@ -71,13 +71,13 @@ public class Processor extends Thread {
 		for (int processLevel = 0; processLevel < numberOfProcessors - 1; processLevel++ ){
 			//Indicate that this process is competing at level processLevel
 			
-			wBuffer.SwapAtomic(flagVarName, processLevel); //flag[processorNumber] = processLevel;
-			//wBuffer.SwapAtomic(flagVarName, processLevel);		
+			wBuffer.store(flagVarName, processLevel); //flag[processorNumber] = processLevel;
+			//wBuffer.store(flagVarName, processLevel);		
 			String turnVarName = "turn" + processLevel;
 			
 			//Indicate that it is this process's turn (to wait) at level K 
-			wBuffer.SwapAtomic(turnVarName, processorNumber); //turn[processLevel] = processorNumber;
-			//wBuffer.SwapAtomic(turnVarName, processorNumber);		
+			wBuffer.store(turnVarName, processorNumber); //turn[processLevel] = processorNumber;
+			//wBuffer.store(turnVarName, processorNumber);		
 			
 			//Check to see if there are processors competing at a higher level 
 			//and that it is this processor's turn to wait.
@@ -86,12 +86,7 @@ public class Processor extends Thread {
 			while(checkForHigherProcessors(processLevel) && turn_at_process_level){
 				//turn_at_process_level: Represents turn[processLevel] == processorNumber
 				//load(turnVarName) is the same as getting the value of turn[processLevel]
-				
-				try {
-					sleep(10);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
+
 				
 				int currentTurnValue = 0;
 				//Try to get the currentTurnValue from the wBuffer
@@ -115,8 +110,7 @@ public class Processor extends Thread {
 	 */
 	public void PetersonsAlgorithmExitSection(){
 		//flag[processorNumber] = -1;
-		wBuffer.SwapAtomic(flagVarName, -1);
-		//wBuffer.SwapAtomic(flagVarName, -1);
+		wBuffer.store(flagVarName, -1);
 		
 		
 	}
@@ -128,7 +122,7 @@ public class Processor extends Thread {
 		csInteger.value = originalValue;
 		
 		try {
-			sleep(1);
+			sleep(2);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
