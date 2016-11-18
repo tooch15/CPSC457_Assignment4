@@ -62,9 +62,12 @@ public class Processor extends Thread {
 		
 	}
 	
-		
-	public void PetersonAlgorithm() {
-		
+	
+	/**
+	 * Call before running <Critical Section> code. Must call PetersonsAlgorithmExitSection after the 
+	 * <Critical Section> is executed.
+	 */
+	public void petersonAlgorithmEntrySection() {
 		//<Entry Section>
 		for (int processLevel = 0; processLevel < numberOfProcessors - 1; processLevel++ ){
 			//Indicate that this process is competing at level processLevel
@@ -79,15 +82,15 @@ public class Processor extends Thread {
 			while(!checkForHigherProcessors(processLevel) && turn[processLevel] == processorNumber);
 			
 		}
-		//<Critical Section>
+		//Process can now enter <Critical Section>
 		
-		
-		
-		//<Exit Section>
+	}
+	
+	/**
+	 * Call after process exits <Critical Section> code
+	 */
+	public void PetersonsAlgorithmExitSection(){
 		flag[processorNumber] = -1;
-		
-		
-		
 	}
 	
 	
