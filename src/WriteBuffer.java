@@ -21,12 +21,19 @@ public class WriteBuffer {
 	private ConcurrentLinkedDeque<String> nextVariableQueue = new ConcurrentLinkedDeque<>();
 	
 	/**
+	 * a MainMemory object to be used to access load and store methods for the SwapAtomic method
+	 */
+	private MainMemory mainMemory;
+	
+	/**
 	 * a constructor for the WriteBuffer object
 	 * @param tsoIn a boolean to determine if the WriteBuffer is tso or pso
 	 */
-	public WriteBuffer(boolean tsoIn) {
+	public WriteBuffer(boolean tsoIn, MainMemory mainMem) {
 		
 		tso = tsoIn;
+		
+		mainMemory = mainMem;
 		
 		if (tso)
 			buffer.put("TSOBuffer", new ConcurrentLinkedDeque<memoryVariable>());
@@ -176,6 +183,29 @@ public class WriteBuffer {
 			nextVariableQueue.add(nextKey);
 		
 		return buffer.get(nextKey).poll();
+		
+	}
+	
+	/**
+	 * the SwapAtomic function to simultaneously do a load and a store of a variable
+	 * this method is synchromized
+	 * @param x the variable that is to be swapped in value
+	 * @param v the new value to be swapped in
+	 * @return the original value of the variable x
+	 */
+	public synchronized int SwapAtomic(String x, int v) {
+		
+		int temp;
+		
+		try {
+			temp = load(x);
+		} catch (NotInBufferException e) {
+			temp = mainMemory.load(x);
+		}
+		
+		mainMemory.store(x, v);
+		
+		return temp;
 		
 	}
 
