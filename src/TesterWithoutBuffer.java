@@ -1,5 +1,5 @@
 
-public class Tester {
+public class TesterWithoutBuffer {
 	
 	public static void main(String[] args) {
 		
@@ -28,27 +28,18 @@ public class Tester {
 		CSInteger csi = new CSInteger();
 		csi.failCount = 0;
 		
-		//Create Processors, MemoryAgents and WriteBuffers
-		Processor[] procs = new Processor[numCPU];
-		MemoryAgent[] agents = new MemoryAgent[numCPU];
-		WriteBuffer[] buffers = new WriteBuffer[numCPU];
-		
+		//Create ProcessorWithoutBuffers
+		ProcessorWithoutBuffer[] procs = new ProcessorWithoutBuffer[numCPU];
 		for (int i = 0; i < numCPU; i++) {
-			
-			buffers[i] = new WriteBuffer(TSO, mainMemory);
-			procs[i] = new Processor(TSO, mainMemory, i, numCPU, buffers[i], csi);
-			agents[i] = new MemoryAgent(buffers[i], mainMemory);
-			
-			agents[i].start();
-			
+			procs[i] = new ProcessorWithoutBuffer(TSO, mainMemory, i, numCPU, csi);			
 		}
 		
-		//Start processors
+		//Start ProcessorWithoutBuffers
 		for (int k = 0; k < numCPU; k++) {
 			procs[k].start();
 		}
 		
-		//Wait for all processors to finish
+		//Wait for all ProcessorWithoutBuffers to finish
 		for (int k = 0; k < numCPU; k++) {
 			try {
 				procs[k].join();
@@ -57,14 +48,10 @@ public class Tester {
 			}
 		}
 		
-		//Tell MemoryAgents to finish
-		for (int k = 0; k < numCPU; k++) {
-			agents[k].endThread();
-		}
-		
 		//Calculate number of failures
 		System.out.println("1000 test threads were ran and there were " + csi.failCount + " failures.");
 		System.out.println("Fail percentage: " + ((csi.failCount / 1000.00) * 100.0) + "%");
+		
 		
 	}
 
